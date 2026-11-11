@@ -677,13 +677,96 @@ defect.
 
 ---
 
-## Roadmap
+## My Roadmap
 
-- ✅ DVL velocity update (body-frame `v_body`) → horizontal position is now observable.
-- USBL / GPS fix update → bounded *absolute* position error.
-- Gyro/accel scale-factor and misalignment states (currently injectable, not estimated).
-- Current (ocean drift) disturbance model.
-- C++ port of `eskf.py`, validated against `exports/*.csv` with `tools/validate_export.py`.
+This roadmap separates the **required Python simulator task** from optional improvements
+and combined-project work. The required scope is **100% complete**.
+
+### Vehicle and trajectory
+
+- [x] Create the virtual underwater vehicle.
+- [x] Maintain ground-truth position, velocity, depth and orientation.
+- [x] Simulate a stationary stage.
+- [x] Simulate acceleration and straight-line travel.
+- [x] Simulate a turn.
+- [x] Simulate descent to a different depth.
+
+### Simulation timing
+
+- [x] Manage simulation time with one physics clock.
+- [x] Sample the accelerometer and gyroscope at 100 Hz.
+- [x] Sample the magnetometer at 50 Hz.
+- [x] Sample the pressure sensor at 10 Hz.
+- [x] Keep every sensor reading timestamped and synchronized.
+
+### Sensor simulation
+
+- [x] Generate ideal accelerometer, gyroscope, magnetometer and pressure readings.
+- [x] Add Gaussian noise.
+- [x] Add constant sensor bias.
+- [x] Add random-walk drift.
+
+### Navigation and evaluation
+
+- [x] Pass sensor measurements to navigation software.
+- [x] Estimate vehicle position, velocity and orientation.
+- [x] Compare navigation estimates against ground truth.
+- [x] Calculate position, depth, velocity and attitude errors.
+- [x] Export sensor streams and ground truth as CSV/JSON.
+
+### Testing and documentation
+
+- [x] Test trajectory endpoints and stage continuity.
+- [x] Test sensor measurement physics.
+- [x] Test noise, bias and drift behaviour.
+- [x] Test navigation accuracy.
+- [x] Pass all 68 automated tests.
+- [x] Provide reproducible example scripts.
+- [x] Provide an automated PASS/FAIL validation command.
+- [x] Document the project in this README.
+- [x] Record bugs and fixes in `docs/IMPLEMENTATION_LOG.md`.
+
+**Required personal scope: complete. No required items remain.**
+
+### Optional improvements
+
+These are enhancements, not missing requirements.
+
+**Highest priority**
+
+- [ ] Add C++ estimates validation so `tools/validate_export.py` can grade the C++
+  navigation output against this simulator's ground truth.
+- [ ] Add a final evaluation report that automatically saves accuracy tables and plots.
+- [ ] Run multi-seed testing to confirm results across several random sensor sequences.
+- [ ] Make mission duration, speeds, depths and turn rates configurable without editing
+  Python code.
+
+**Better sensor realism**
+
+- [ ] Add sensor latency and timestamp offsets.
+- [ ] Add DVL bottom-lock loss based on altitude or operating conditions.
+- [ ] Add temperature-dependent pressure/depth error.
+- [ ] Add magnetic disturbances from the vehicle or environment.
+- [ ] Add an ocean-current disturbance model.
+- [ ] Estimate scale-factor and misalignment in the navigation filter instead of only
+  injecting them as faults.
+
+**Better vehicle simulation**
+
+- [ ] Add USBL or GPS position fixes.
+- [ ] Replace the prescribed trajectory with a hydrodynamic vehicle model.
+- [ ] Add thruster commands, drag and buoyancy.
+- [ ] Add lawn-mower survey, spiral-descent and waypoint-tracking missions.
+
+**Better validation**
+
+- [ ] Add filter-consistency checks in addition to RMSE.
+- [ ] Add automated pass/fail tests for every injected sensor fault.
+- [ ] Separate fast unit tests from slow full-mission tests.
+- [ ] Run tests on multiple Python versions and operating systems in CI.
+
+**Completed beyond the original brief:** DVL velocity aiding, generic sensor fault
+injection, golden-metric regression testing and the CI workflow.
 
 ---
 
