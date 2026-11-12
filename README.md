@@ -1,4 +1,4 @@
-# AUV Simulator — ground truth and synthetic sensor data
+# AUV Simulator -ground truth and synthetic sensor data
 
 Python simulator that produces the **ground truth** and the **synthetic sensor
 measurements** used to develop and test the AUV navigation software. It does not
@@ -178,7 +178,7 @@ sim.export_sensor_csv("accelerometer", "exports/accelerometer.csv")
 All files are CSV with a `t` column in seconds. A navigation filter reads these
 files and produces estimates on the same timeline.
 
-**`exports/ground_truth.csv`** — one row per physics tick (24,001 rows at dt = 5 ms).
+**`exports/ground_truth.csv`** -one row per physics tick (24,001 rows at dt = 5 ms).
 
 | Column | Unit | Meaning |
 |--------|------|---------|
@@ -189,19 +189,19 @@ files and produces estimates on the same timeline.
 | `v_n`, `v_e`, `v_d` | m/s | NED velocity |
 | `yaw_rad`, `pitch_rad`, `roll_rad` | rad | z-y-x Euler angles |
 
-**`exports/accelerometer.csv`** — 100 Hz, columns `t, accelerometer_0..2` in m/s²
+**`exports/accelerometer.csv`** -100 Hz, columns `t, accelerometer_0..2` in m/s²
 (body frame, specific force).
 
-**`exports/gyroscope.csv`** — 100 Hz, columns `t, gyroscope_0..2` in rad/s
+**`exports/gyroscope.csv`** -100 Hz, columns `t, gyroscope_0..2` in rad/s
 (body frame `p, q, r`).
 
-**`exports/magnetometer.csv`** — 50 Hz, columns `t, magnetometer_0..2` in µT
+**`exports/magnetometer.csv`** -50 Hz, columns `t, magnetometer_0..2` in µT
 (body frame Earth field).
 
-**`exports/pressure.csv`** — 10 Hz, columns `t, pressure_0` in Pa (absolute).
+**`exports/pressure.csv`** -10 Hz, columns `t, pressure_0` in Pa (absolute).
 Convert with `pressure_to_depth()` or `(P − 101325) / (ρ g)`, `ρ = 1025 kg/m³`.
 
-Dropped samples are **absent** from a file — never zero-filled.
+Dropped samples are **absent** from a file -never zero-filled.
 
 ---
 
@@ -216,8 +216,8 @@ Dropped samples are **absent** from a file — never zero-filled.
 
 Every sensor implements:
 
-- `ideal(state)` — the exact physical value, used for validation;
-- `read(state, dt)` — the corrupted value, or `None` when the sample dropped.
+- `ideal(state)` -the exact physical value, used for validation;
+- `read(state, dt)` -the corrupted value, or `None` when the sample dropped.
 
 Error model, applied in this order: mounting misalignment, scale factor, Gaussian
 noise, random-walk drift, fixed bias, stuck-at latch, dropout. All terms default to
@@ -250,7 +250,7 @@ for tick in clock:
 Timestamps are always `index * dt_physics`, so ground truth and measurements share
 one timeline by construction.
 
----
+--- 
 
 ## 9. Tests
 
