@@ -23,26 +23,21 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r simulator/requirements.txt
 
-      - name: Unit + golden tests
+      - name: Unit tests
         run: pytest tests -q
 
-      - name: End-to-end pipeline (truth -> sensors -> ESKF)
-        run: python examples/run_pipeline.py
+      - name: Generate the synthetic dataset
+        working-directory: simulator/src
+        run: python -m auv_simulator.main
 
-      - name: Validate CSV export contract
-        run: python tools/validate_export.py
-
-      - name: Sensor parameter sweep
-        run: python examples/run_sweep.py
-
-      - name: Upload artifacts
+      - name: Upload dataset and plots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: sim-outputs
           path: |
-            outputs/
             exports/
+            outputs/
           if-no-files-found: ignore

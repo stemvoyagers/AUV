@@ -1,1 +1,18 @@
-docs/
+# Virtual environments (regenerate from simulator/requirements.txt)
+.venv/
+venv/
+env/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Generated artefacts (reproduce with `python -m auv_simulator.main`)
+outputs/
+
+# Local tooling
+.screenshots/
+.idea/
+.vscode/
+.DS_Store
