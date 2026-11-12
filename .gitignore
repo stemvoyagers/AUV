@@ -11,6 +11,9 @@ __pycache__/
 # Generated artefacts (reproduce with `python -m auv_simulator.main`)
 outputs/
 
+# Local archive of out-of-scope reference work
+extras/
+
 # Local tooling
 .screenshots/
 .idea/
