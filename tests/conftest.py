@@ -1,9 +1,3 @@
-"""Shared pytest setup.
-
-The package lives under ``simulator/src`` (standard ``src`` layout), so that
-directory is added to ``sys.path`` before any test imports it.
-"""
-
 import sys
 from pathlib import Path
 
@@ -14,17 +8,15 @@ SRC = ROOT / "simulator" / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from auv_simulator.main import build_reference_simulator  # noqa: E402
-from auv_simulator.trajectory import Trajectory          # noqa: E402
+from auv_simulator.main import build_reference_simulator
+from auv_simulator.trajectory import Trajectory
 
 
 @pytest.fixture
 def trajectory() -> Trajectory:
-    """The default 120-second scenario."""
     return Trajectory()
 
 
 @pytest.fixture
 def reference_sim():
-    """The reference four-sensor simulator."""
     return build_reference_simulator(seed=7)

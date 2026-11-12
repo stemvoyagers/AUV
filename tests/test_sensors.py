@@ -1,5 +1,3 @@
-"""Tests for the four synthetic sensors: ideal physics, then error models."""
-
 
 import numpy as np
 import pytest
@@ -79,7 +77,6 @@ class TestMagnetometerIdeal:
     def test_heading_east_swaps_horizontal_component(self, level_state):
         level_state.quaternion = np.array([np.cos(np.pi / 4), 0.0, 0.0, np.sin(np.pi / 4)])
         reading = Magnetometer().ideal(level_state)
-        # Field points north in NED; heading east puts north on body -y.
         assert reading[0] == pytest.approx(0.0, abs=1e-9)
         assert reading[1] == pytest.approx(-Magnetometer.EARTH_FIELD_NED[0], abs=1e-9)
 
@@ -142,8 +139,6 @@ class TestSensorNonIdealities:
 
 
 class TestFaultInjection:
-    """Faults are inert by default and fully opt-in per sensor."""
-
     def test_default_sensor_has_no_faults(self, level_state):
         sensor = Accelerometer(seed=0)
         assert sensor.read(level_state) is not None
@@ -197,7 +192,6 @@ class TestSensorsInSimulation:
         depth_from_pressure = pressure_to_depth(data["data"][:, 0])
         truth_at_samples = np.interp(data["t"], truth["t"], truth["depth"])
 
-        # 5 Pa of noise is about 0.5 mm of depth; allow generous headroom.
         np.testing.assert_allclose(depth_from_pressure, truth_at_samples, atol=0.05)
 
     def test_ideal_readings_are_logged_alongside_noisy_ones(self, reference_sim):

@@ -1,13 +1,3 @@
-"""Gyroscope model.
-
-Physics
--------
-An ideal gyroscope directly reads the body-frame angular velocity
-[p, q, r] = [roll_rate, pitch_rate, yaw_rate].
-
-    gyro_reading = angular_velocity_body + noise + bias + drift
-"""
-
 from __future__ import annotations
 
 from ..state import VehicleState

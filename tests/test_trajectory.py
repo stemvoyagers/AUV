@@ -1,15 +1,3 @@
-"""Tests for the analytic 120-second trajectory.
-
-The scenario under test:
-    0-10 s    stationary at 20 m, heading north
-    10-20 s   smooth acceleration to 0.8 m/s
-    20-35 s   constant 0.8 m/s north
-    35-65 s   smooth 90 deg turn towards the east
-    65-75 s   constant 0.8 m/s east
-    75-105 s  descent from 20 m to 24 m
-    105-120 s constant 0.8 m/s at 24 m
-"""
-
 import numpy as np
 import pytest
 
@@ -102,7 +90,6 @@ class TestAccelerationStage:
         assert trajectory.state_at(20.0).acceleration_ned[0] == pytest.approx(0.0, abs=1e-9)
 
     def test_distance_travelled_is_four_metres(self, trajectory):
-        # Half the duration at the average of a smooth 0 -> 0.8 ramp.
         assert trajectory.state_at(20.0).north == pytest.approx(4.0, abs=1e-9)
 
 
@@ -114,7 +101,6 @@ class TestNorthCruiseStage:
             np.testing.assert_allclose(s.acceleration_ned, [0.0, 0.0, 0.0], atol=1e-12)
 
     def test_position_at_stage_end(self, trajectory):
-        # 4 m from the acceleration stage + 15 s at 0.8 m/s
         assert trajectory.state_at(35.0).north == pytest.approx(16.0, abs=1e-9)
 
     def test_depth_is_held(self, trajectory):

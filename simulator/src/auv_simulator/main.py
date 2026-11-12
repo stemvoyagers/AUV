@@ -1,22 +1,3 @@
-"""Entry point: generate the synthetic dataset and inspect the trajectory.
-
-Running this module
-
-    python -m auv_simulator.main
-
-or, from the ``simulator/`` directory,
-
-    python src/auv_simulator/main.py
-
-runs the 120-second reference scenario with the four agreed sensors, writes
-the ground truth and one CSV per sensor, and renders the trajectory and the
-sensor/state time series.
-
-The CSVs are the interface with the navigation software: every file starts
-with a ``t`` column in seconds, and the ground-truth file uses the NED
-columns ``north, east, depth, v_n, v_e, v_d, yaw_rad, pitch_rad, roll_rad``.
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -35,7 +16,6 @@ REPO_ROOT = SIMULATOR_DIR.parent
 DEFAULT_EXPORT_DIR = REPO_ROOT / "exports"
 DEFAULT_PLOT_DIR = REPO_ROOT / "outputs"
 
-#: Nominal sensor suite.  These values are the documented reference.
 SENSOR_SUITE = (
     ("accelerometer", Accelerometer, dict(noise_std=0.01, bias=0.005, noise_density=1e-4), 100.0),
     ("gyroscope", Gyroscope, dict(noise_std=0.002, bias=0.001, noise_density=1e-5), 100.0),
@@ -47,7 +27,6 @@ SENSOR_SUITE = (
 def build_reference_simulator(seed: int = 42,
                               dt_physics: float = 0.005,
                               initial_depth: float = DEFAULT_INITIAL_DEPTH) -> Simulator:
-    """Create the simulator with the reference four-sensor suite."""
     trajectory = Trajectory(initial_depth=initial_depth)
     sim = Simulator(trajectory=trajectory, dt_physics=dt_physics, seed=seed)
     for _, sensor_cls, params, frequency_hz in SENSOR_SUITE:
@@ -56,7 +35,6 @@ def build_reference_simulator(seed: int = 42,
 
 
 def export_dataset(sim: Simulator, export_dir: Path) -> list[Path]:
-    """Write ground truth plus one CSV per sensor.  Returns the file paths."""
     export_dir.mkdir(parents=True, exist_ok=True)
     written = []
 
@@ -73,7 +51,6 @@ def export_dataset(sim: Simulator, export_dir: Path) -> list[Path]:
 
 
 def plot_trajectory(sim: Simulator, save_path: Path) -> None:
-    """3D view of the NED trajectory with stage markers."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -101,7 +78,6 @@ def plot_trajectory(sim: Simulator, save_path: Path) -> None:
 
 
 def plot_time_series(sim: Simulator, save_path: Path) -> None:
-    """North/east/depth and attitude against time."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -133,7 +109,6 @@ def plot_time_series(sim: Simulator, save_path: Path) -> None:
 
 
 def summarise(sim: Simulator) -> str:
-    """Short human-readable summary of the run."""
     truth = sim.ground_truth_arrays()
     final = sim.history[-1].state
     initial = sim.history[0].state
@@ -157,7 +132,7 @@ def summarise(sim: Simulator) -> str:
 
 
 def parse_args(argv=None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser = argparse.ArgumentParser(description="Generate the synthetic dataset and inspect the trajectory.")
     parser.add_argument("--dt", type=float, default=0.005,
                         help="physics time step in seconds (default: 0.005)")
     parser.add_argument("--seed", type=int, default=42,

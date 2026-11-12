@@ -1,5 +1,3 @@
-"""Tests for the ground-truth state container and the frame maths it relies on."""
-
 import numpy as np
 import pytest
 
@@ -52,7 +50,6 @@ class TestStateContainer:
         assert s.position[0] == 1.0
 
     def test_level_resting_vehicle_reads_gravity_on_body_z(self):
-        """Specific force at rest and level is +g on the down axis."""
         s = VehicleState()
         np.testing.assert_allclose(s.linear_acceleration_body(), [0.0, 0.0, GRAVITY], atol=1e-9)
 
@@ -82,7 +79,6 @@ class TestRotations:
                     np.testing.assert_allclose(r_nb @ r_bn, np.eye(3), atol=1e-12)
 
     def test_yaw_90_maps_north_to_starboard_negative(self):
-        """Heading east: world north projects onto body -y."""
         r = ned_to_body_rotation(np.pi / 2, 0.0, 0.0)
         np.testing.assert_allclose(r @ np.array([1.0, 0.0, 0.0]), [0.0, -1.0, 0.0], atol=1e-9)
 

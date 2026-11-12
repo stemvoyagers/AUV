@@ -1,18 +1,3 @@
-"""Simulator: trajectory + multi-rate sensors + fixed physics clock.
-
-The simulator owns:
-    * the analytic :class:`~auv_simulator.trajectory.Trajectory` that provides
-      the ground truth,
-    * every configured sensor and its nominal sampling frequency,
-    * a :class:`~auv_simulator.simulation_clock.SimulationClock` that produces
-      the timeline and decides which sensors are due.
-
-On every physics tick the simulator asks the trajectory for the exact state,
-lets each due sensor produce a (possibly corrupted) reading, and stores both
-the truth and the readings in one log entry.  Ground truth and synthetic
-measurements therefore share the same timestamps by construction.
-"""
-
 from __future__ import annotations
 
 import csv
@@ -36,15 +21,12 @@ GROUND_TRUTH_COLUMNS = (
 
 @dataclass
 class LogEntry:
-    """One physics tick: the true state plus whatever the sensors reported."""
     t: float
     state: VehicleState
     readings: Dict[str, SensorReading] = field(default_factory=dict)
 
 
 class Simulator:
-    """Orchestrates the trajectory, the clock and the sensor suite."""
-
     def __init__(self,
                  trajectory: Optional[Trajectory] = None,
                  dt_physics: float = 0.005,
@@ -57,11 +39,7 @@ class Simulator:
 
         self.history: List[LogEntry] = []
 
-    # ------------------------------------------------------------------
-    # Sensor registration
-    # ------------------------------------------------------------------
     def add_sensor(self, sensor: BaseSensor, frequency_hz: float) -> None:
-        """Register a sensor at a nominal sampling frequency."""
         if frequency_hz <= 0:
             raise ValueError("frequency_hz must be positive")
         sensor._rng = self._rng
@@ -71,11 +49,7 @@ class Simulator:
     def sensor_names(self) -> list[str]:
         return list(self._sensors)
 
-    # ------------------------------------------------------------------
-    # Run
-    # ------------------------------------------------------------------
     def run(self, max_time: Optional[float] = None) -> List[LogEntry]:
-        """Execute the simulation and return the log."""
         self.history.clear()
         for sensor, _ in self._sensors.values():
             sensor.reset()
@@ -94,8 +68,6 @@ class Simulator:
             for name in tick.due_sensors:
                 sensor, period = self._sensors[name]
                 reading = sensor.read(state, period)
-                # A dropped sample is simply absent from the log, exactly as a
-                # sensor that produced no output would be.
                 if reading is not None:
                     readings[name] = reading
 
@@ -103,9 +75,6 @@ class Simulator:
 
         return self.history
 
-    # ------------------------------------------------------------------
-    # Convenience: ground-truth arrays
-    # ------------------------------------------------------------------
     def ground_truth_arrays(self) -> dict:
         states = [h.state for h in self.history]
         return {
@@ -119,7 +88,6 @@ class Simulator:
         }
 
     def sensor_arrays(self, name: str) -> Optional[dict]:
-        """Collected readings for one sensor, or ``None`` if it never reported."""
         entries = [h for h in self.history if name in h.readings]
         if not entries:
             return None
@@ -131,11 +99,7 @@ class Simulator:
                       if first.data_ideal is not None else None),
         }
 
-    # ------------------------------------------------------------------
-    # Export
-    # ------------------------------------------------------------------
     def export_ground_truth_csv(self, path) -> None:
-        """Write the ground truth, one row per physics tick."""
         gt = self.ground_truth_arrays()
         with open(path, "w", newline="") as fh:
             writer = csv.writer(fh)
@@ -155,7 +119,6 @@ class Simulator:
                 ])
 
     def export_sensor_csv(self, name: str, path) -> None:
-        """Write timestamp + measurement columns for one sensor."""
         arr = self.sensor_arrays(name)
         if arr is None:
             raise KeyError(f"No readings for sensor '{name}' in history")
@@ -172,7 +135,6 @@ class Simulator:
                                 + [f"{float(v):.8f}" for v in np.atleast_1d(d_row)])
 
     def export_json(self, path) -> None:
-        """Single JSON bundle: ground truth plus every sensor."""
         gt = self.ground_truth_arrays()
         bundle = {
             "physics_dt": self.dt_physics,

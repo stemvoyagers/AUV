@@ -1,5 +1,3 @@
-"""Sensor models: ideal physics plus configurable noise, bias and drift."""
-
 from .base import BaseSensor, SensorReading
 from .accelerometer import Accelerometer
 from .gyroscope import Gyroscope

@@ -1,17 +1,3 @@
-"""AUV ground-truth simulator and synthetic sensor generator.
-
-Public surface
---------------
-``VehicleState``        ground-truth state container
-``Trajectory``          analytic 120 s scenario
-``SimulationClock``     fixed-step clock with multi-rate sensor scheduling
-``Simulator``           trajectory + sensors + logging + export
-``Accelerometer``       specific force in the body frame
-``Gyroscope``           body-frame angular rate
-``Magnetometer``        Earth field in the body frame
-``PressureSensor``      hydrostatic pressure (-> depth)
-"""
-
 from .state import VehicleState
 from .trajectory import Trajectory, Stage
 from .simulation_clock import SimulationClock, ClockTick

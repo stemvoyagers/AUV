@@ -1,5 +1,3 @@
-"""Tests for the simulation clock and its multi-rate sensor scheduling."""
-
 import numpy as np
 import pytest
 
